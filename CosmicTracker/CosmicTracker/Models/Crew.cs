@@ -7,8 +7,8 @@ namespace CosmicTracker.Models
 {
     public class Crew
     {
-
-        public string Name { get; set; }
-        public string Craft { get; set; }
+        public string Message { get; set; }
+        public string[]  People { get; set; }
+        public string number { get; set; }
     }
 }

@@ -1,47 +1,44 @@
-﻿@using Microsoft.AspNetCore.Mvc.Rendering
+﻿@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Mvc.Rendering
 @model List<string>
 @{
     Layout = "_Layout";
 }
 @{ViewBag.Title = "Index";}
-@{
-    var endTime = DateTime.UtcNow.AddSeconds(10);
-    var timeRemainig = TimeSpan.FromTicks(endTime.Ticks - DateTime.UtcNow.Ticks).TotalSeconds;
-}
-
 <header id="header">
     <h1>Tracking of ISS SpaceShip</h1>
     <h3> by Yevhen Dombrovskyi</h3>
     <div class="container">
         <h5>Measurment speed and distance between two points of ISS SpaceShip : </h5>
+        <div id="map"></div>
         <ul>
+
             <li id="start">latitude from start point of measurement is : @Model[0]</li>
+
             <li id="start">longtitude from start point of measurement is: @Model[1]</li>
+
+            Measurment time is : 10 sec
+
             <li id="finish">latitude from end point of measurement is : @Model[2]</li>
+
             <li id="finish">longtitude from end point of measurement is: @Model[3]</li>
-            <li id ="result">Distance between start and finish points (Measurment time 10 sec) :
-                <br font-size="20px">@Model[4] km<br/>
-            </li>
-            <li id="result">Speed of ISS station: @Model[5]  km/hour</li>
+
+            <li id="result">Distance between start and finish points : @Model[4] km</li>
+
+            <li id="result">Speed of ISS station: @Model[5] km/hour</li>
+
+            <li style="color: gold">Time from last measurment : @Model[6] </li>
+
+            <li> Current time is :</li>
+            <li id="time"></li>
         </ul>
     </div>
-        <div class="container" align="right">
-            <div class="no-padding">
-                <p style="font-size:24px;">
-                        The SpaceChip is currently over
-                        <span id="isslat"></span>° N
-                    <span id="isslon"></span>° E
-                    $getISS();
-                </p>
-            </div>
-        </div>
-    
 </header>
 <footer id="footer">
     <p>Contact : </p>
     <ul class="icons">
         <li><a href="https://www.linkedin.com/in/yevhen-dombrovskyi-a32062115/"><i class="icon fa-linkedin fa-3x"></i></a></li>
-        <li><a href="https://ydombrovskyi@gmail.com" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
+        <li><a href="mailto:ydombrovskyi@gmail.com" class="icon fa-envelope-o"><span class="label">Email</span></a></li>
     </ul>
     <ul class="copyright">
      <li>Yevhen Dombrovskyi 2019 - CosmicTracker</li>

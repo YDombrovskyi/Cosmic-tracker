@@ -21,10 +21,9 @@ namespace CosmicTracker.Controllers
        private double lat2;
        private double lon1;
        private double lon2;
-        private DateTime time1;
-        private DateTime time2;
         List<string> datas = new List<string>();
-
+        private string[] Peoples;
+        public List<string> Team = new List<string>();
         public IActionResult Index()
         {
             Location();
@@ -36,16 +35,43 @@ namespace CosmicTracker.Controllers
                 Convert.ToString(lat2),
                 Convert.ToString(lon2),
                 Math.Round(dis,3).ToString(),
-                Speedresult.ToString()
-               // datas[6]//crew1
-               // datas[7],//crew2
-               // datas[8]//crew3
+                Speedresult.ToString(),
+                datas[6]
+               //// datas[7]//crew2
+                //datas[8]//crew3
             };
           
             return View(information);
         }
         //  get Location 2 times
+        public async void SpaceTeam()
+        {
+            HttpClient http = new HttpClient();
+            try
+            {
+                http.BaseAddress = new  Uri("http://api.open-notify.org/astros.json");
+                http.Timeout = TimeSpan.FromSeconds(10);
+            }
+            catch (Exception)
+            {
+                RedirectToAction("Error", "Home");
+            }
+            var data = http.GetAsync("http://api.open-notify.org/astros.json").Result.Content.ReadAsStringAsync().Result;
+            SiteResponse SpaceTm = Newtonsoft.Json.JsonConvert.DeserializeObject<SiteResponse>(data);
+            if (SpaceTm.message != "success")
+            {
+                RedirectToAction("Error", "Home");
+            }
+            else
+            {
+                datas.Add(SpaceTm.crew.number);
 
+                foreach (var crewMember in SpaceTm.crew.People)
+                {
+                    Team.Add(crewMember);
+                }
+            }
+        }
         public async void Location()
         {
             HttpClient http = new HttpClient();
@@ -53,7 +79,7 @@ namespace CosmicTracker.Controllers
             try
             {
                 http.BaseAddress = new Uri("http://api.open-notify.org/iss-now.json");
-                http.Timeout = TimeSpan.FromSeconds(15);
+                http.Timeout = TimeSpan.FromSeconds(10);
             }
             catch (Exception)
             {
@@ -71,14 +97,13 @@ namespace CosmicTracker.Controllers
             datas.Add(dat2.iss_position.latitude);
             datas.Add(dat2.iss_position.longitude);
             datas.Add(dat2.timestamp.ToString());
-           // datas.Add(dat2.crew.ToString());
+           
             
         }
         
         //Main function to calculate distance   
         public double Distance()
         {
-            
             lat1 = double.Parse(datas[0], CultureInfo.InvariantCulture);
             lon1 = double.Parse(datas[1], CultureInfo.InvariantCulture);
             lat2 = double.Parse(datas[3], CultureInfo.InvariantCulture);
@@ -89,11 +114,8 @@ namespace CosmicTracker.Controllers
                 var d2 = lat2 * (Math.PI / 180.0);
                 var num2 = lon2 * (Math.PI / 180.0) - num1;
                 var d3 = Math.Pow(Math.Sin((d2 - d1) / 2.0), 2.0) + Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
-
                 var dist = 6371 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3)));
-            
             return dist;
-
         }
 
         public double TimeConverter()
@@ -101,6 +123,8 @@ namespace CosmicTracker.Controllers
             
             var point1 = UnixTimeStampToDateTime(datas[2]);
             var point2 = UnixTimeStampToDateTime(datas[5]);
+            string format = "HH:mm  ddd d MMM yyyy"; 
+            datas.Add(point2.ToString(format));
            var timeForMeasurm = (point2 - point1).TotalSeconds;
            return timeForMeasurm;
         }
@@ -108,7 +132,7 @@ namespace CosmicTracker.Controllers
         public static DateTime UnixTimeStampToDateTime(string timeStamp)
         {
             // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+           DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(Convert.ToDouble(timeStamp)).ToLocalTime();
             return dtDateTime;
         }
