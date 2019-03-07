@@ -1,4 +1,26 @@
-﻿<!DOCTYPE html>
+﻿@using System.Net.Http;
+@{
+    string Lat()
+    {
+        var info = "";
+        HttpClient http = new HttpClient();
+        var data = http.GetAsync("http://api.open-notify.org/iss-now.json").Result.Content.ReadAsStringAsync().Result;
+        SiteResponse dat = Newtonsoft.Json.JsonConvert.DeserializeObject<SiteResponse>(data);
+        info = dat.iss_position.latitude;
+        return info;
+    }
+
+    string Lon()
+    {
+        var inf = "";
+        HttpClient http = new HttpClient();
+        var data = http.GetAsync("http://api.open-notify.org/iss-now.json").Result.Content.ReadAsStringAsync().Result;
+        SiteResponse dat = Newtonsoft.Json.JsonConvert.DeserializeObject<SiteResponse>(data);
+        inf = dat.iss_position.longitude;
+        return inf;
+    }
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -43,20 +65,26 @@
     </script>
     <script>
         function initMap() {
-            var map = new google.maps.Map(document.getElementById("map"),{
-                center: { lat: -34.397, lng: 150.644 },
-                zoom: 4
+            var location = { lat: @Lat(), lng: @Lon()};
+            var map = new google.maps.Map(document.getElementById("map"), {
+                center: location,
+                zoom: 4,
+                mapTypeId: 'terrain'
             });
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+            setInterval(initMap, 5000);
         }
     </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMgsOFogiP0mzDHrnDWhde6FAWnqddRbo&callback=initMap">
-</script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMgsOFogiP0mzDHrnDWhde6FAWnqddRbo&callback=initMap">
+    </script>
 </body>
 </html>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="js/main.js"></script>
-
-
-
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 
