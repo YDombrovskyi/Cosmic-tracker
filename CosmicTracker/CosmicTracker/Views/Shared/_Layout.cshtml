@@ -16,6 +16,7 @@
         HttpClient http = new HttpClient();
         var data = http.GetAsync("http://api.open-notify.org/iss-now.json").Result.Content.ReadAsStringAsync().Result;
         SiteResponse dat = Newtonsoft.Json.JsonConvert.DeserializeObject<SiteResponse>(data);
+        //Guid AIzaSyDMgsOFogiP0mzDHrnDWhde6FAWnqddRbo&callback
         inf = dat.iss_position.longitude;
         return inf;
     }
@@ -78,7 +79,7 @@
             setInterval(initMap, 10000);
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMgsOFogiP0mzDHrnDWhde6FAWnqddRbo&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key= ***your API key***=initMap">
     </script>
 </body>
 </html>
